@@ -13,3 +13,4 @@ pub mod traits;
 pub mod thread;
 pub mod symbol;
 pub mod vm;
+pub mod fiber;

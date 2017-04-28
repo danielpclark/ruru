@@ -28,6 +28,7 @@ pub use class::string::RString;
 pub use class::symbol::Symbol;
 pub use class::thread::Thread;
 pub use class::vm::VM;
+pub use class::fiber::Fiber;
 
 pub use class::traits::object::Object;
 pub use class::traits::verified_object::VerifiedObject;

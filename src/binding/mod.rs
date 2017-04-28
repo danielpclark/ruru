@@ -11,3 +11,4 @@ pub mod symbol;
 pub mod thread;
 pub mod util;
 pub mod vm;
+pub mod fiber;
