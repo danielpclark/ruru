@@ -57,6 +57,14 @@ pub fn instance_variable_set(object: Value, name: &str, value: Value) -> Value {
     unsafe { class::rb_ivar_set(object, binding_util::internal_id(name), value) }
 }
 
+pub fn class_variable_get(object: Value, name: &str) -> Value {
+    unsafe { class::rb_cvar_get(object, binding_util::internal_id(name)) }
+}
+
+pub fn class_variable_set(object: Value, name: &str, value: Value) -> Value {
+    unsafe { class::rb_cvar_set(object, binding_util::internal_id(name), value) }
+}
+
 pub fn define_attribute(object: Value, name: &str, reader: bool, writer: bool) {
     let name = util::str_to_cstring(name);
     let reader = util::bool_to_c_int(reader);

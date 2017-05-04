@@ -734,6 +734,13 @@ pub trait Object: From<Value> {
         AnyObject::from(result)
     }
 
+    /// Sets class variable for object
+    fn class_variable_get(&self, variable: &str) -> AnyObject {
+        let result = class::class_variable_get(self.value(), variable);
+
+        AnyObject::from(result)
+    }
+
     /// Sets an instance variable for object
     ///
     /// # Examples
@@ -811,6 +818,13 @@ pub trait Object: From<Value> {
     /// ```
     fn instance_variable_set<T: Object>(&mut self, variable: &str, value: T) -> AnyObject {
         let result = class::instance_variable_set(self.value(), variable, value.value());
+
+        AnyObject::from(result)
+    }
+
+    /// Sets class variable for object.
+    fn class_variable_set<T: Object>(&mut self, variable: &str, value: T) -> AnyObject {
+        let result = class::class_variable_set(self.value(), variable, value.value());
 
         AnyObject::from(result)
     }
