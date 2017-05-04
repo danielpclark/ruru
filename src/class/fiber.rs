@@ -1,7 +1,7 @@
 use std::convert::From;
 
 use binding::fiber;
-use {Object, AnyObject};
+use {Object, AnyObject, VerifiedObject, Class};
 use types::{Argc, Value};
 use util;
 
