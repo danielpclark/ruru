@@ -51,3 +51,13 @@ impl Object for Fiber {
         self.value
     }
 }
+
+impl VerifiedObject for Fiber {
+    fn is_correct_type<T: Object>(object: &T) -> bool {
+        object.class() == Class::from_existing("Fiber")
+    }
+
+    fn error_message() -> &'static str {
+        "Error converting to Fiber"
+    }
+}
