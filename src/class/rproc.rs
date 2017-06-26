@@ -1,7 +1,8 @@
 use std::convert::From;
+use std::slice;
 
 use binding::rproc;
-use types::Value;
+use types::{Value, Argc};
 use util;
 
 use {AnyObject, Class, Object, VerifiedObject};
@@ -62,6 +63,39 @@ impl Proc {
         let result = rproc::call(self.value(), argc, argv.as_ptr());
 
         AnyObject::from(result)
+    }
+
+    /// Creates a new instance of Ruby `Proc` containing given `closure`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use ruru::{RString, VM};
+    /// # VM::init();
+    ///
+    /// let string = RString::new("Hello, World!");
+    ///
+    /// assert_eq!(string.to_string(), "Hello, World!".to_string());
+    /// ```
+    ///
+    /// Ruby:
+    ///
+    /// ```ruby
+    /// str = 'Hello, World!'
+    ///
+    /// str == 'Hello, World!'
+    /// ```
+    pub fn new<F>(mut closure: F) -> Self
+      where F : FnMut(&Iterator<Item=AnyObject>) -> AnyObject {
+        let wrapped_closure = |_arg: Value, argc: Argc, argv: *const Value, _blockarg: Value| {
+            unsafe {
+                let slice = slice::from_raw_parts(argv, argc as usize);
+                let any_objects = slice.iter().map(|v| AnyObject::from(*v));
+                closure(&any_objects).value()
+            }
+        };
+        let result = rproc::new(wrapped_closure);
+        Self::from(result)
     }
 }
 
