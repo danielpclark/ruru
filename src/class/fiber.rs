@@ -1,4 +1,5 @@
 use std::convert::From;
+use std::slice;
 
 use binding::fiber;
 use {Object, AnyObject, VerifiedObject, Class};
@@ -12,10 +13,16 @@ pub struct Fiber {
 
 impl Fiber {
     /// Creates a new Fiber
-    pub fn new<F>(func: F) -> Self
-        where F: FnMut(Value, Argc, *const Value, Value) -> Value
-    {
-        Self::from(fiber::new::<F>(func))
+    pub fn new<F>(mut func: F) -> Self
+      where F : FnMut(&Iterator<Item=AnyObject>) -> AnyObject {
+      let wrapped_func = |_arg: Value, argc: Argc, argv: *const Value, _blockarg: Value| {
+          unsafe {
+              let slice = slice::from_raw_parts(argv, argc as usize);
+              let any_objects = slice.iter().map(|v| AnyObject::from(*v));
+              func(&any_objects).value()
+          }
+      };
+        Self::from(fiber::new(wrapped_func))
     }
 
     /// Resumes a fiber
