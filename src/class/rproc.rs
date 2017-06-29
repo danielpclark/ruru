@@ -86,12 +86,12 @@ impl Proc {
     /// str == 'Hello, World!'
     /// ```
     pub fn new<F>(mut closure: F) -> Self
-      where F : FnMut(&Iterator<Item=AnyObject>) -> AnyObject {
+      where F : FnMut(Vec<AnyObject>) -> AnyObject {
         let wrapped_closure = |_arg: Value, argc: Argc, argv: *const Value, _blockarg: Value| {
             unsafe {
                 let slice = slice::from_raw_parts(argv, argc as usize);
                 let any_objects = slice.iter().map(|v| AnyObject::from(*v));
-                closure(&any_objects).value()
+                closure(any_objects.collect::<Vec<_>>()).value()
             }
         };
         let result = rproc::new(wrapped_closure);
