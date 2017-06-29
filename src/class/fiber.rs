@@ -14,12 +14,12 @@ pub struct Fiber {
 impl Fiber {
     /// Creates a new Fiber
     pub fn new<F>(mut func: F) -> Self
-      where F : FnMut(&Iterator<Item=AnyObject>) -> AnyObject {
+      where F : FnMut(Vec<AnyObject>) -> AnyObject {
       let wrapped_func = |_arg: Value, argc: Argc, argv: *const Value, _blockarg: Value| {
           unsafe {
               let slice = slice::from_raw_parts(argv, argc as usize);
               let any_objects = slice.iter().map(|v| AnyObject::from(*v));
-              func(&any_objects).value()
+              func(any_objects.collect::<Vec<_>>()).value()
           }
       };
         Self::from(fiber::new(wrapped_func))
